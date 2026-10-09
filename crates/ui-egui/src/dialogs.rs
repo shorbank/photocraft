@@ -78,6 +78,7 @@ fn place_id(d: &Dialog) -> egui::Id {
 
 pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
     crate::layer_style::color_picker::prune(app);
+    crate::type_panels_ui::color_picker::prune(app);
     let dialogs = app.ui.dialogs.clone();
     let top = dialogs.last().map(|d| d.id);
     let mut shown = Vec::new();
@@ -447,6 +448,7 @@ pub fn cancel(app: &mut PhotocraftApp, id: u64) -> Result<Value, String> {
     app.ui.dialogs.retain(|d| !crate::layer_style::color_picker::child_of(&d.fields, id));
     app.filter_preview = None;
     app.color_range = None;
+    crate::type_panels_ui::color_picker::prune(app);
     Ok(Value::Null)
 }
 

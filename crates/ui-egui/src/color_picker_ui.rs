@@ -623,6 +623,9 @@ pub fn take_add_swatch(app: &mut PhotocraftApp, f: &mut Map<String, Value>) {
 
 /// OK: set the foreground or background colour.
 pub fn confirm(app: &mut PhotocraftApp, f: &Map<String, Value>) -> Result<Value, String> {
+    if crate::type_panels_ui::color_picker::owns(f) {
+        return crate::type_panels_ui::color_picker::confirm(app, f);
+    }
     if crate::layer_style::color_picker::owns(f) {
         return crate::layer_style::color_picker::confirm(app, f);
     }

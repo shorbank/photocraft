@@ -3405,3 +3405,6 @@ fontWeight	Thin	Πολύ λεπτά
 
 # Shared Layer Style color picker
 	Color Picker (Layer Style Color)	Επιλογέας χρώματος (χρώμα στυλ επιπέδου)
+
+# Shared text style Color Picker (#2015)
+	Color Picker (Text Color)	Επιλογέας χρώματος (χρώμα κειμένου)
