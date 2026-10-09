@@ -125,7 +125,12 @@ pub fn invoke(app: &mut PhotocraftApp, ctx: &egui::Context, id: &str, params: Va
     if crate::discard_ui::intercept(app, id, &params) {
         return Ok(Value::Null);
     }
-    invoke_unguarded(app, ctx, id, params)
+    let r = invoke_unguarded(app, ctx, id, params)?;
+    // The palette's empty-query list (UI-217-7); opening the palette isn't a command to recall.
+    if id != "edit.search" {
+        crate::palette::note_recent(ctx, id);
+    }
+    Ok(r)
 }
 
 /// [`invoke`] without the unsaved-changes prompt, for once the user has already answered it.
@@ -345,6 +350,14 @@ pub(crate) fn invoke_unguarded(app: &mut PhotocraftApp, ctx: &egui::Context, id:
             app.ui.panels.properties = true;
             app.ui.dock_tabs.properties = 0;
             Ok(r)
+        }
+        // Edit › Stroke…: open its full options dialog when called from menus/context
+        // menus. Explicit params from Actions, CLI, MCP and control channel execute directly.
+        crate::stroke_ui::COMMAND if params.as_object().is_none_or(|o| o.is_empty()) => {
+            if let Some(Err(why)) = photocraft_engine::commands::find(id).map(|c| (c.enabled)(&app.session)) {
+                return Err(why);
+            }
+            Ok(json!({"dialog": crate::stroke_ui::open(app)}))
         }
         // Photoshop's "Select and Mask…" is the engine's select.refineEdge.
         // Select › Color Range… from the menu: the dialog (with params: the engine directly).
