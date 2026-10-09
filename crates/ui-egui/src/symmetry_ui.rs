@@ -109,14 +109,20 @@ pub fn track(app: &mut PhotocraftApp, ctx: &egui::Context) {
     }
 }
 
-/// An empty icon slot keeps rows ready for later assets; the ordinary menu check is separate.
+/// Highlight the active mode without reserving a separate checkmark column.
 fn mode_button(ui: &mut egui::Ui, mode: SymmetryMode, checked: bool) -> egui::Response {
-    let check = ui.id().with((mode.id(), "check"));
-    let placeholder = ui.id().with((mode.id(), "icon"));
+    let icon = ui.id().with((mode.id(), "icon"));
     let name = label(mode);
-    let b = egui::Button::new((Atom::custom(check, vec2(14.0, 16.0)), Atom::custom(placeholder, vec2(16.0, 16.0)), name, Atom::grow())).atom_ui(ui);
-    if checked && let Some(r) = b.rect(check) {
-        icons::paint(ui, r, "check", 14.0, Tokens::get(ui.ctx()).icon);
+    let b = egui::Button::new((Atom::custom(icon, vec2(16.0, 16.0)), name, Atom::grow())).selected(checked).atom_ui(ui);
+    let tint = Tokens::get(ui.ctx()).icon;
+    if let Some(r) = b.rect(icon) {
+        let glyph = match mode {
+            SymmetryMode::Vertical => "symmetry-vertical",
+            SymmetryMode::Horizontal => "symmetry-horizontal",
+            SymmetryMode::Dual => "symmetry-dual",
+            SymmetryMode::Diagonal => "symmetry-diagonal",
+        };
+        icons::paint(ui, r, glyph, 14.0, tint);
     }
     b.response.widget_info(|| egui::WidgetInfo::selected(egui::WidgetType::Button, ui.is_enabled(), checked, name));
     b.response

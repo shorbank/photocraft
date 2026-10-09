@@ -178,4 +178,38 @@ mod tests {
             assert!(!s.contains("currentColor"), "{name}");
         }
     }
+
+    #[test]
+    fn symmetry_axes_rasterize_centred_with_matching_line_weight_at_both_dpis() {
+        for size in [14_u32, 28] {
+            let mut coverage = Vec::new();
+            for name in ["symmetry-vertical", "symmetry-horizontal", "symmetry-diagonal", "symmetry-dual"] {
+                let bytes = white_icons().get(name).unwrap();
+                let image = egui_extras::image::load_svg_bytes_with_size(
+                    bytes,
+                    egui::load::SizeHint::Size { width: size, height: size, maintain_aspect_ratio: true },
+                    &Default::default(),
+                )
+                .unwrap();
+                assert_eq!(image.size, [size as usize; 2]);
+                let ink: Vec<_> = image.pixels.iter().enumerate().filter(|(_, p)| p.a() > 16).collect();
+                assert!(!ink.is_empty(), "{name}");
+                let xs: Vec<_> = ink.iter().map(|(i, _)| i % size as usize).collect();
+                let ys: Vec<_> = ink.iter().map(|(i, _)| i / size as usize).collect();
+                for coords in [&xs, &ys] {
+                    let centre = (*coords.iter().min().unwrap() + *coords.iter().max().unwrap()) as f32 / 2.0;
+                    assert!((centre - (size as f32 - 1.0) / 2.0).abs() <= 0.5, "{name}: off-centre");
+                }
+                assert!(ink.iter().all(|(_, p)| p.r() > 0 && p.r() == p.g() && p.g() == p.b()), "{name}: tinting mask must be white");
+                coverage.push(image.pixels.iter().map(|p| f32::from(p.a()) / 255.0).sum::<f32>());
+            }
+            let vertical = coverage[0];
+            // At 14px a diagonal's antialiasing can differ by nearly two covered pixels.
+            let tolerance = if size == 14 { 0.15 } else { 0.1 };
+            for single in &coverage[1..3] {
+                assert!((single - vertical).abs() / vertical < tolerance, "inconsistent axis stroke weight at {size}px: {coverage:?}");
+            }
+            assert!(coverage[3] > vertical * 1.7 && coverage[3] < vertical * 2.1);
+        }
+    }
 }
