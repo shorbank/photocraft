@@ -132,9 +132,14 @@ pub fn button_chrome(ui: &egui::Ui, rect: Rect, selected: bool, hovered: bool) -
 
 /// Square icon button: transparent until hovered; `selected` gets the accent treatment.
 pub fn button(ui: &mut egui::Ui, name: &str, box_size: f32, selected: bool, tooltip: &str) -> Response {
+    button_with_icon_size(ui, name, box_size, (box_size * 0.52).round(), selected, tooltip)
+}
+
+/// Square icon button with an explicit glyph size, independent of its hit area.
+pub fn button_with_icon_size(ui: &mut egui::Ui, name: &str, box_size: f32, icon_size: f32, selected: bool, tooltip: &str) -> Response {
     let (rect, resp) = ui.allocate_exact_size(Vec2::splat(box_size), Sense::click());
     let tint = button_chrome(ui, rect, selected, resp.hovered());
-    paint(ui, rect, name, (box_size * 0.52).round(), tint);
+    paint(ui, rect, name, icon_size, tint);
     if tooltip.is_empty() { resp } else { resp.on_hover_text(tl!(tooltip)) }
 }
 

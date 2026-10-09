@@ -2621,7 +2621,7 @@ fn symmetry_menu(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
     let t = Tokens::get(ui.ctx());
     let current = app.session.active().and_then(|st| st.symmetry_path.as_ref()).map(|axis| axis.source.clone());
     let choices = symmetry_choices(app);
-    let resp = icons::button(ui, "arrow-left-right", 24.0, current.is_some(), tl!("Set painting symmetry options"));
+    let resp = icons::button_with_icon_size(ui, "painting-symmetry", 24.0, 14.0, current.is_some(), tl!("Set painting symmetry options"));
     let resp = crate::brush_picker::named(resp, tl!("Set painting symmetry options"));
     egui::Popup::menu(&resp).show(|ui| {
         ui.set_min_width(200.0);

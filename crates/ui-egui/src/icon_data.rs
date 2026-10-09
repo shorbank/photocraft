@@ -1,4 +1,4 @@
-//! Lucide icons (ISC licence), embedded and tinted at runtime.
+//! Icons embedded and tinted at runtime; sources and licences are listed in `ATTRIBUTION.md`.
 
 pub static ICONS: &[(&str, &[u8])] = &[
     ("align-center", include_bytes!("../../../assets/icons/align-center.svg")),
@@ -68,6 +68,7 @@ pub static ICONS: &[(&str, &[u8])] = &[
     ("move", include_bytes!("../../../assets/icons/move.svg")),
     ("navigation", include_bytes!("../../../assets/icons/navigation.svg")),
     ("paint-bucket", include_bytes!("../../../assets/icons/paint-bucket.svg")),
+    ("painting-symmetry", include_bytes!("../../../assets/icons/painting-symmetry.svg")),
     ("palette", include_bytes!("../../../assets/icons/palette.svg")),
     ("panel-right", include_bytes!("../../../assets/icons/panel-right.svg")),
     ("panels-top-left", include_bytes!("../../../assets/icons/panels-top-left.svg")),
